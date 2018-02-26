@@ -1,0 +1,7 @@
+IP1=36.6.29.254
+IP2=223.244.247.12
+table1=10
+table2=20
+sudo ip rule add from $IP1 table $table1
+sudo ip rule add from $IP2 table $table2
+ip rule

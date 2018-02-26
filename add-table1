@@ -1,0 +1,5 @@
+route1=36.6.29.1 
+IP1=36.6.29.254
+table = 10
+sudo ip route add $route1 dev ppp1 src $IP1 table $table
+sudo ip route add default via $IP1 table $table

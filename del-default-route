@@ -1,0 +1,1 @@
+sudo ip route del default dev ppp1 scope link 	
