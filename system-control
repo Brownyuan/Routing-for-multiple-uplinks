@@ -21,8 +21,8 @@ Copy_config() {
 
     sudo cp interfaces /etc/network/interfaces
     sudo cp dsl-* /etc/ppp/peers/
-    sudo cp secrets chap-secrets
-    sudo cp secrets pap-secrets
+    sudo cp secrets /etc/ppp/chap-secrets
+    sudo cp secrets /etc/ppp/pap-secrets
     cd ..
 }
 
