@@ -1,0 +1,71 @@
+#!/bin/bash
+
+route1=`Get_route ppp1`
+route2=`Get_route ppp2`
+ip1=`Get_IP ppp1`
+ip2=`Get_IP ppp2`
+
+Usage() {
+    echo "Usage: $0 { add | del | status }"
+    exit 1
+}
+
+Parameter_judge() {
+    correct_num="$1"
+    real_num="$2"
+    if [ "$correct_num" != "$real_num" ]; then
+        Usage
+    fi
+}
+
+Get_IP() {
+    iface="$1"
+    ip=`ifconfig $iface | grep "inet" | awk -F ":" '{print $2}' | awk '{print $1}'`
+    echo $ip
+}
+
+Get_route() {
+    iface="$1"
+    for ip in `route -n | grep "$iface"`
+    do 
+        if [[ "$ip" == *".1"* ]];then
+            echo $ip
+            exit 1
+        fi
+    done
+}
+
+Table() {
+    action="$1"
+    
+    sudo ip route $action $route1 dev ppp1 src $ip1 table 10
+    sudo ip route $action $route2 dev ppp2 src $ip2 table 20
+
+    sudo ip route $action default via $ip1 table 10
+    sudo ip route $action default via $ip2 table 20
+}
+
+Status() {
+    ip route
+}
+
+case "$1" in
+    add)
+        Parameter_judge 1 $#
+        Table add
+        ;;
+
+    del)
+        Parameter_judge 1 $#
+        Table del
+        ;;
+
+    status)
+        Parameter_judge 1 $#
+        Status
+        ;;
+
+    *)
+        Usage
+        ;;
+esac

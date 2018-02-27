@@ -1,0 +1,57 @@
+#!/bin/bash
+
+ip1=`Get_IP ppp1`
+ip2=`Get_IP ppp2`
+
+
+Usage() {
+    echo "Usage: $0 { add | del | status }"
+    exit 1
+}
+
+Parameter_judge() {
+    correct_num="$1"
+    real_num="$2"
+    if [ "$correct_num" != "$real_num" ]; then
+        Usage
+    fi
+}
+
+Get_IP() {
+    iface="$1"
+    ip=`ifconfig $iface | grep "inet" | awk -F ":" '{print $2}' | awk '{print $1}'`
+    echo $ip
+}
+
+rule() {
+    action="$1"
+    sudo ip rule $action from $ip1 table 10
+    sudo ip rule $action from $ip2 table 20
+}
+
+Status() {
+    ip rule
+}
+
+
+case "$1" in 
+    add)
+        Parameter_judge 1 $#
+        rule add 
+        ;;
+
+    del)
+        Parameter_judge 1 $#
+        rule del 
+        ;;
+
+    status)
+        Parameter_judge 1 $#
+        Status
+        ;;
+
+    *)
+        Usage
+        ;;
+esac
+

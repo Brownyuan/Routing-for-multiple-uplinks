@@ -1,0 +1,57 @@
+#!/bin/bash
+
+Usage() {
+    echo "Usage: $0 { ppp1 | ppp2 | both | status }"
+    exit 1
+} 
+
+Parameter_judge() {
+    correct_num="$1"
+    real_num="$2"
+    if [ "$correct_num" != "$real_num" ]; then
+        Usage
+    fi
+}
+
+default_route() {
+    iface="$1"
+    sudo ip route replace default dev $iface scope link 
+}
+
+default_multi_route() {
+    sudo ip route replace default scope global \
+            nexthop dev ppp1 weight 1 \
+            nexthop dev ppp2 weight 1
+}
+
+Status() {
+    ip route
+}
+
+case "$1" in 
+    ppp1)
+        Parameter_judge 1 $#
+        default_route ppp1
+        ;;
+
+    ppp2)
+        Parameter_judge 1 $#
+        default_route ppp2
+        ;;
+
+    both)
+        Parameter_judge 1 $#
+        default_multi_route
+        ;;
+
+    status)
+        Parameter_judge 1 $#
+        Status
+        ;;
+
+    *)
+        Usage
+        ;;
+esac
+
+
