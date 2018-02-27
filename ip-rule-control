@@ -1,8 +1,5 @@
 #!/bin/bash
 
-ip1=`Get_IP ppp1`
-ip2=`Get_IP ppp2`
-
 
 Usage() {
     echo "Usage: $0 { add | del | status }"
@@ -25,6 +22,9 @@ Get_IP() {
 
 rule() {
     action="$1"
+    ip1=`Get_IP ppp1`
+    ip2=`Get_IP ppp2`
+
     sudo ip rule $action from $ip1 table 10
     sudo ip rule $action from $ip2 table 20
 }

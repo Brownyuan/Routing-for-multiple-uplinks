@@ -1,9 +1,5 @@
 #!/bin/bash
 
-route1=`Get_route ppp1`
-route2=`Get_route ppp2`
-ip1=`Get_IP ppp1`
-ip2=`Get_IP ppp2`
 
 Usage() {
     echo "Usage: $0 { add | del | status }"
@@ -37,7 +33,11 @@ Get_route() {
 
 Table() {
     action="$1"
-    
+    route1=`Get_route ppp1`
+    route2=`Get_route ppp2`
+    ip1=`Get_IP ppp1`
+    ip2=`Get_IP ppp2`
+
     sudo ip route $action $route1 dev ppp1 src $ip1 table 10
     sudo ip route $action $route2 dev ppp2 src $ip2 table 20
 
