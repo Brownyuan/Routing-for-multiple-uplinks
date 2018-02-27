@@ -46,7 +46,10 @@ Table() {
 }
 
 Status() {
-    ip route
+    echo "table 10"
+    ip route list table 10
+    echo "table 20"
+    ip route list table 20
 }
 
 case "$1" in
