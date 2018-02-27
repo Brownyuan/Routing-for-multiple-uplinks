@@ -1,5 +1,0 @@
-route2=223.244.247.1
-IP2=223.244.247.12
-table = 20
-sudo ip route add $route1 dev ppp1 src $IP1 table $table
-sudo ip route add default via $IP1 table $table

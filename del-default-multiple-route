@@ -1,2 +1,0 @@
-sudp ip route del default scope global nexthop dev ppp1 weight 1
-nexthop dev ppp2 weight 1
