@@ -1,0 +1,117 @@
+#!/bin/bash
+
+Usage() {
+    echo "Usage: $0 {   install | uninstall | rule [add/del/status] | table [add/del/status] | route [ppp1/ppp2/both/status] | status }"
+    exit 1
+}
+
+Parameter_judge() {
+    correct_num="$1"
+    real_num="$2"
+    if [ "$correct_num" != "$real_num" ]; then
+        Usage
+    fi
+}
+
+Copy_config() {
+    cd config/
+    sudo cp /etc/network/interfaces /etc/network/if.ppp.bk
+    sudo cp /etc/ppp/chap-secrets /etc/ppp/chap-secrets.ppp.bk
+    sudo cp /etc/ppp/pap-secrets /etc/ppp/pap-secrets.ppp.bk
+
+    sudo cp interfaces /etc/network/interfaces
+    sudo cp dsl-* /etc/ppp/peers/
+    sudo cp secrets chap-secrets
+    sudo cp secrets pap-secrets
+    cd ..
+}
+
+Restore_config() {
+    sudo cp /etc/network/if.ppp.bk /etc/network/interfaces
+    sudo cp /etc/ppp/chap-secrets.ppp.bk /etc/ppp/chap-secrets
+    sudo cp /etc/ppp/pap-secrets.ppp.bk /etc/ppp/pap-secrets
+
+    sudo rm /etc/network/if.ppp.bk
+    sudo rm /etc/ppp/chap-secrets.ppp.bk
+    sudo rm /etc/ppp/pap-secrets.ppp.bk
+    sudo rm /etc/ppp/peers/dsl-1
+    sudo rm /etc/ppp/peers/dsl-2
+}
+
+Config_ip_table() {
+    action="$1"
+    ./ip_table-control $action
+}
+
+Config_ip_rule() {
+    action="$1"
+    ./ip-rule-control $action
+}
+
+Config_ip_route() {
+    action="$1"
+    ./ip-route-control $action
+}
+
+Reboot_check() {
+    echo "Project need reboot to work."
+    read -p "Do you want to reboot now[Y/N]:" yn
+    if [ "$yn" == "Y" -o "$yn" == "y" ];then
+        echo "reboot"
+        sudo reboot
+    else 
+        echo "reboot later by user"
+    fi
+}
+
+Install() {
+    Copy_config
+    Config_ip_table add
+    Config_ip_rule add
+    Config_ip_route both
+    Reboot_check
+}
+
+Uninstall() {
+    Restore_config
+    Config_ip_route ppp1
+    Config_ip_rule del
+    Config_ip_table del
+    Reboot_check
+}
+
+case "$1" in 
+    install)
+        Parameter_judge 1 $#
+        Install
+        ;;
+
+    uninstall)
+        Parameter_judge 1 $#
+        Uninstall
+        ;;
+
+    rule)
+        Parameter_judge 2 $#
+        Config_ip_rule $2
+        ;;
+
+    table)
+        Parameter_judge 2 $#
+        Config_ip_table $2
+        ;;
+
+    route)
+        Parameter_judge 2 $#
+        Config_ip_route $2
+        ;;
+
+    *)
+        Usage
+        ;;
+esac
+
+    
+
+
+
