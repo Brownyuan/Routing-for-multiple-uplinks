@@ -1,0 +1,49 @@
+#!/bin/bash
+
+Usage() {
+    echo "Usage:    $0 { start | stop | status }"
+}
+
+Parameter_judge() {
+    correct_num="$1" 
+    real_num="$2" 
+    if [ "$correct_num" != "$real_num" ]; then
+        Usage
+    fi
+}
+
+Config() {
+    sudo cp /etc/network/interfaces /etc/network/if.backup
+    sudo cp NIF /etc/network/interfaces
+    sudo mkdir /etc/routing
+    sudo cp routing.sh /etc/routing
+    sudo cp routing.service /etc/systemd/system/
+}
+
+Restore() {
+    sudo cp /etc/network/inter
+}
+
+Start() {
+    
+}
+
+
+case "$1" in 
+    start)
+
+        ;;
+
+    stop)
+
+        ;;
+
+    status)
+
+        ;;
+
+    *)
+        Usage
+        ;;
+esac
+
