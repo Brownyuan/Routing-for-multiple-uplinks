@@ -1,7 +1,7 @@
 # Minimalistic default options file for DSL/PPPoE connections
 unit 2
 plugin rp-pppoe.so enp2s0
-user "18955012902"
+user "02513358003"
 noipdefault
 defaultroute
 replacedefaultroute
