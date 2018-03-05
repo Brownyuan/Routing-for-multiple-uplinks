@@ -1,7 +1,12 @@
 #!/bin/bash
 
+Network_dir="/etc/network"
+Service_dir="/etc/systemd/system"
+Working_dir="/etc/routing"
+
 Usage() {
-    echo "Usage:    $0 { start | stop | status }"
+    echo "Usage: $0 { start | stop | status }"
+    exit 1
 }
 
 Parameter_judge() {
@@ -12,34 +17,72 @@ Parameter_judge() {
     fi
 }
 
+
 Config() {
-    sudo cp /etc/network/interfaces /etc/network/if.backup
-    sudo cp NIF /etc/network/interfaces
-    sudo mkdir /etc/routing
-    sudo cp routing.sh /etc/routing
-    sudo cp routing.service /etc/systemd/system/
+    sudo cp $Network_dir/interfaces $Network_dir/if.backup
+    sudo cp NIF $Network_dir/interfaces
+    sudo mkdir $Working_dir
+    sudo cp routing.sh $Working_dir
+    sudo cp routing.service $Service_dir/
 }
 
 Restore() {
-    sudo cp /etc/network/inter
+    sudo cp $Network_dir/if.backup $Network_dir/interfaces
+    sudo rm $Network_dir/interfaces
+    sudo rm -rf $Working_dir
+    sudo rm $Service_dir/routing.service
+}
+
+Service_start() {
+    for action in enable start status
+    do 
+        sudo systemctl $action routing.service
+    done
+}
+
+Service_stop() {
+    for action in disable stop status
+    do
+        sudo systemctl $action routing.service
+    done
 }
 
 Start() {
-    
+    Config
+    Service_start
 }
 
+Stop() {
+    Restore
+    Service_stop
+}
+
+Status() {
+    echo "Service"
+    sudo systemctl status routing.service
+    echo
+    echo "ip route"
+    ip route
+    echo
+    echo "iptable"
+    sudo iptables -t nat -L POSTROUTING -nv
+    sudo iptables -t filter -L FORWARD -nv
+}
 
 case "$1" in 
     start)
-
+        Parameter_judge 1 $#
+        Start
         ;;
 
     stop)
-
+        Parameter_judge 1 $#
+        Stop
         ;;
 
     status)
-
+        Parameter_judge 1 $#
+        Status
         ;;
 
     *)
