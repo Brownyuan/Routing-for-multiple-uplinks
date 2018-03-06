@@ -1,0 +1,13 @@
+[Unit]
+Description=isp balance 
+After=network.target routing.service
+Requires=network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStart=/etc/routing/ip-route-control both
+ExecStop=/etc/routing/ip-route-control ppp1
+
+[Install]
+WantedBy=default.target

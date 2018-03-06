@@ -22,21 +22,25 @@ Config() {
     sudo cp $Network_dir/interfaces $Network_dir/if.backup
     sudo cp NIF $Network_dir/interfaces
     sudo mkdir $Working_dir
-    sudo cp routing.sh $Working_dir
+    sudo cp routing.sh $Working_dir/
+    sudo cp ip-route-control $Working_dir/
     sudo cp routing.service $Service_dir/
+    sudo cp balance.service $Service_dir/
 }
 
 Restore() {
     sudo cp $Network_dir/if.backup $Network_dir/interfaces
-    sudo rm $Network_dir/interfaces
+    sudo rm $Network_dir/if.backup
     sudo rm -rf $Working_dir
     sudo rm $Service_dir/routing.service
+    sudo rm $Service_dir/balance.service
 }
 
 Service_start() {
     for action in enable start status
     do 
         sudo systemctl $action routing.service
+        sudo systemctl $action balance.service
     done
 }
 
@@ -44,6 +48,7 @@ Service_stop() {
     for action in disable stop status
     do
         sudo systemctl $action routing.service
+        sudo systemctl $action balance.service
     done
 }
 
